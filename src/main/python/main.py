@@ -5,8 +5,8 @@ from fbs_runtime.application_context.PyQt5 import ApplicationContext
 from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QDialog, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, 
         QProgressBar, QPushButton, QVBoxLayout, QWidget, QFileDialog, QSpinBox)
 # from createPassiveImmersion import *
-# from prepareFiles import *
-# from createDeck import *
+from prepareFiles import *
+from createDeck import *
 from ankiInfo import *
 
 class MiaAuto(QDialog):
@@ -19,6 +19,7 @@ class MiaAuto(QDialog):
 
         self.ok_Button = QPushButton("Let's Go!")
         self.ok_Button.setEnabled(False)
+        self.ok_Button.clicked.connect(self.execute)
 
         mainLayout = QGridLayout()
         mainLayout.addWidget(self.subs2srs_Group, 1, 0)
@@ -144,8 +145,23 @@ class MiaAuto(QDialog):
 
     def is_Complete(self):
         textBoxes = [self.subs2srs_Path_Txt.text(), self.subtitle_Path_Txt.text(), self.video_Path_Txt.text(), 
-        self.deck_Name.text(),self.mp3Combiner_Path_Txt.text(),self.output_Path_Txt.text(),self.passive_Path_Txt.text(), self.anki_Path_Txt.text()]
+        self.deck_Name.text(),self.mp3Combiner_Path_Txt.text(),self.output_Path_Txt.text(),self.passive_Path_Txt.text()]
         self.ok_Button.setEnabled(all(textBoxes))
+    
+    def execute(self):
+        video_Path = os.path.dirname(self.video_Path_Txt.text())
+        video_Path_Ext = self.video_Path_Txt.text().rsplit('.', 1)[1]
+        subtitle_Path = os.path.dirname(self.subtitle_Path_Txt.text())
+        subtitle_Path_Ext =  self.subtitle_Path_Txt.text().rsplit('.', 1)[1]
+        subs2srs_Path = self.subs2srs_Path_Txt.text()
+        directory_Path = self.output_Path_Txt.text()
+        deck_Name = self.deck_Name.text()
+        subs_Time_Shift = str(self.subs_Time_Shift_Txt.value() if self.subs_Time_Shift.isChecked() else 0)
+
+        sortFilesNumerically(video_Path, video_Path_Ext)
+        sortFilesNumerically(subtitle_Path, subtitle_Path_Ext)
+
+        create_Subs2srs_Deck(subs2srs_Path, subtitle_Path, video_Path, directory_Path,deck_Name,subs_Time_Shift)
 
 if __name__ == '__main__':
     appctxt = ApplicationContext()      
