@@ -4,7 +4,7 @@ import os
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QDialog, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, 
         QProgressBar, QPushButton, QVBoxLayout, QWidget, QFileDialog, QSpinBox)
-# from createPassiveImmersion import *
+from createPassiveImmersion import *
 from prepareFiles import *
 from createDeck import *
 from ankiInfo import *
@@ -157,11 +157,18 @@ class MiaAuto(QDialog):
         directory_Path = self.output_Path_Txt.text()
         deck_Name = self.deck_Name.text()
         subs_Time_Shift = str(self.subs_Time_Shift_Txt.value() if self.subs_Time_Shift.isChecked() else 0)
+        mp3Combiner_Path = os.path.dirname(self.mp3Combiner_Path_Txt.text())
+        audio_Path = directory_Path +"\\"+deck_Name+".media"
+        passive_Immersion_Path = self.passive_Path_Txt.text()
 
         sortFilesNumerically(video_Path, video_Path_Ext)
         sortFilesNumerically(subtitle_Path, subtitle_Path_Ext)
 
         create_Subs2srs_Deck(subs2srs_Path, subtitle_Path, video_Path, directory_Path,deck_Name,subs_Time_Shift)
+        move_Files_To_Combined_Path(audio_Path, mp3Combiner_Path)
+        create_CombinedMP3(mp3Combiner_Path, passive_Immersion_Path, deck_Name)
+
+       
 
 if __name__ == '__main__':
     appctxt = ApplicationContext()      
